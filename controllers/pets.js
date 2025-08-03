@@ -6,9 +6,9 @@ const router = express.Router()
 router.get('/', async (req, res) => {
     try {
         const foundPets = await Pet.find()
-        res.json(foundPets)
+        res.status(200).json(foundPets)
     } catch(err) {
-        res.json({ msg: err.message })
+        res.status(500).json({ msg: err.message })
     }
 })
 
@@ -16,10 +16,10 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const createdPet = await Pet.create(req.body)
-        res.json(createdPet)
+        res.status(200).json(createdPet)
     } catch (err) {
         const message = { msg: err.message }
-        res.json(message)
+        res.status(500).json(message)
     }
 })
 
@@ -59,6 +59,25 @@ router.delete('/:petId', async (req, res) => {
         res.status(200).json(deletedPet)
     } catch(err) {
         if(res.statusCode === 404) {
+            res.json({ msg: err.message })
+        }
+        res.status(500).json({ msg: err.message }) 
+    }
+})
+
+// UPDATE A SINGLE PET
+router.put('/:petId', async (req, res) => {
+    try {
+        const updatedPet = await Pet.findByIdAndUpdate(req.params.petId, req.body, {new: true})
+
+        if (!updatedPet) {
+            res.status(404)
+            throw new Error('Pet not found')
+        }
+
+        res.status(200).json(updatedPet)
+    } catch(err) {
+        if (res.statusCode === 404) {
             res.json({ msg: err.message })
         }
         res.status(500).json({ msg: err.message }) 
