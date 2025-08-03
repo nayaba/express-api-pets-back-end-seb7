@@ -2,7 +2,6 @@ const Pet = require('../models/pet')
 const express = require('express')
 const router = express.Router()
 
-
 // GET ROUTE (TEST)
 router.get('/', async (req, res) => {
     try {
@@ -44,6 +43,25 @@ router.get('/:petId', async (req, res) => {
             res.json({ msg: err.message })
         }
         res.status(500).json({ msg: err.message })  
+    }
+})
+
+// DELETE ONE PET
+router.delete('/:petId', async (req, res) => {
+    try {
+        const deletedPet = await Pet.findByIdAndDelete(req.params.petId)
+        
+        if (!deletedPet) {
+            res.status(404)
+            throw new Error('Pet not found.')
+        }
+
+        res.status(200).json(deletedPet)
+    } catch(err) {
+        if(res.statusCode === 404) {
+            res.json({ msg: err.message })
+        }
+        res.status(500).json({ msg: err.message }) 
     }
 })
 
