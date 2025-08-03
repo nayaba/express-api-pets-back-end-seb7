@@ -29,9 +29,21 @@ router.post('/', async (req, res) => {
 router.get('/:petId', async (req, res) => {
     try {
         const foundPet = await Pet.findById(req.params.petId)
-        res.json(foundPet)
+
+        // if pet is not found
+        if (!foundPet) {
+            res.status(404)
+            throw new Error('Pet not found.')
+        }
+
+        res.status(200).json(foundPet)
     } catch (err) {
-        res.json({ msg: err.message })  
+
+        // what if it's a 404?
+        if (res.statusCode === 404) {
+            res.json({ msg: err.message })
+        }
+        res.status(500).json({ msg: err.message })  
     }
 })
 
