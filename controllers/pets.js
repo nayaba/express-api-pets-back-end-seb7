@@ -25,5 +25,15 @@ router.post('/', async (req, res) => {
 })
 
 
+// SHOW ONE PET
+router.get('/:petId', async (req, res) => {
+    try {
+        const foundPet = await Pet.findById(req.params.petId)
+        res.json(foundPet)
+    } catch (err) {
+        res.json({ msg: err.message })  
+    }
+})
+
 
 module.exports = router
